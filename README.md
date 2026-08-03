@@ -24,5 +24,5 @@ Replace `your-app-opt` with the name of your compiled MOOSE executable.
 ### Folder guide
 - `src/`, `include/`  — custom material model source and headers
 - `Input file for MOOSE/`      — MOOSE `.i` input files
-- `Different Loading condition/` — input variants for each loading case (0/0, 60/0, 0/60, 30/30, R-ratio, temperature)
+- `Different Loading condition/` — input variants for each loading case (0/0, 60/0, 0/60, 30/30) and change the R-ratio effect as mean strain which can be done by input file, the temperature effect for 760°C and 980°C can be calculated manually and do the changes in the fcc_props.in file accordingly)
 - `Matlab Code and Data for Post processing of the results/` — post-processing scripts and figure data
