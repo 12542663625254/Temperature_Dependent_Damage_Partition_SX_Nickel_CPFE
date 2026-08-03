@@ -3,7 +3,7 @@ Dislocation density-based crystal plasticity (CPFE) model for temperature-depend
 
 
 
-##### HOW TO RUN THE CODE#######
+##### HOW TO RUN THE CODE
 
 ## Running the simulations in MOOSE
 
