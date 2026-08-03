@@ -1,0 +1,83 @@
+clc; clear; close all;
+
+%% 1. SETUP & DATA LOADING
+% Define files and labels
+files = {'0_0_2_4.csv', '30_0_2_4.csv', '60_0_2_4.csv', '240_0_2_4.csv'};
+labels = {'0/0 Fatigue', '30/0 Dwell', '60/0 Dwell', '240/0 Dwell'};
+% Cycle Times (T_cyc) for each case
+T_cycs = [48, , 108, 48]; % Please verify these match your experimental frequencies
+t_start = 12;
+
+% Colors for distinction
+colors = [
+    0, 0.4470, 0.7410;  % Blue
+    0.8500, 0.3250, 0.0980; % Red-Orange
+    0.4660, 0.6740, 0.1880; % Green
+    0.4940, 0.1840, 0.5560  % Purple
+];
+
+%% 2. DATA PROCESSING LOOP
+ds = struct(); % Initialize structure to store processed data
+
+for i = 1:length(files)
+    if ~isfile(files{i})
+        fprintf('Warning: %s not found. Skipping...\n', files{i});
+        continue;
+    end
+    
+    raw_data = readmatrix(files{i});
+    ds(i).time = raw_data(:, 1);
+    ds(i).s_dot = raw_data(:, 5);
+    
+    % Calculations
+    ds(i).cycles = (ds(i).time - t_start) / T_cycs(i) + 1;
+    ds(i).s_acc = cumtrapz(ds(i).time, ds(i).s_dot);
+end
+
+%% 3. FIGURE 1: INSTANTANEOUS ENTROPY RATE (Time-domain)
+figure('Color', 'w', 'Name', 'Rate Comparison', 'Position', [100 100 1000 750]);
+hold on;
+
+for i = 1:length(ds)
+    if isempty(ds(i).time), continue; end
+    % Using solid lines for Dwell and Dashed for Pure Fatigue if preferred
+    l_style = '-'; if i == 1, l_style = '--'; end 
+    
+    plot(ds(i).time, ds(i).s_dot, 'LineWidth', 2, 'Color', colors(i,:), ...
+         'LineStyle', l_style, 'DisplayName', labels{i});
+end
+
+% Formatting
+grid off; box on; axis square;
+set(gca, 'FontSize', 22, 'LineWidth', 2, 'FontName', 'Times New Roman', 'TickDir', 'in');
+xlabel('Time (s)', 'FontSize', 26);
+ylabel('Entropy Rate, $\dot{s}$', 'Interpreter', 'latex', 'FontSize', 26);
+title('Instantaneous Entropy Rate Comparison', 'FontSize', 24);
+legend('Location', 'northeast', 'FontSize', 16);
+
+% Material Annotation
+annotation('textbox', [0.15 0.75 0.2 0.1], 'String', ...
+    {'DD6 Superalloy', 'T = 760 °C', '$\Delta\epsilon = 2.4\%$'}, ...
+    'Interpreter', 'latex', 'FontSize', 18, 'FontName', 'Times New Roman', ...
+    'BackgroundColor', 'white', 'EdgeColor', 'k');
+
+%% 4. FIGURE 2: CUMULATIVE ACCUMULATION (Cycle-domain)
+figure('Color', 'w', 'Name', 'Cumulative Comparison', 'Position', [150 150 900 700]);
+hold on;
+
+for i = 1:length(ds)
+    if isempty(ds(i).time), continue; end
+    plot(ds(i).cycles, ds(i).s_acc, 'LineWidth', 3, 'Color', colors(i,:), ...
+         'DisplayName', labels{i});
+end
+
+% Formatting
+xlim([0 5]); % Focus on first 5 cycles as requested
+grid off; box on; axis square;
+set(gca, 'FontSize', 22, 'LineWidth', 2, 'FontName', 'Times New Roman', 'TickDir', 'in');
+xlabel('Number of cycles, N', 'FontSize', 26);
+ylabel('Cumulative Entropy, $S_{acc}$', 'Interpreter', 'latex', 'FontSize', 26);
+title('Entropy Accumulation (First 5 Cycles)', 'FontSize', 24);
+legend('Location', 'northwest', 'FontSize', 16);
+
+fprintf('All comparison plots generated successfully.\n');

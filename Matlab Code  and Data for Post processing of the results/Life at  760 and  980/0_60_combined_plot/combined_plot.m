@@ -1,0 +1,209 @@
+clc;
+clear;
+close all;
+
+%% 1. SETUP: DEFINE THE FOUR CASES (0/60 Compressive Dwell)
+% =========================================================================
+cases(1).filename = 'Pin_2_4_60C.csv'; 
+cases(1).epsilon_a = 0.012;      
+cases(1).exp_life = 16;           
+
+cases(2).filename = 'Pin_2_0_60C.csv'; 
+cases(2).epsilon_a = 0.01;      
+cases(2).exp_life = 176;         
+
+cases(3).filename = 'Pin_1_8_60C.csv'; 
+cases(3).epsilon_a = 0.009;      
+cases(3).exp_life = 318;          
+
+cases(4).filename = 'Pin_1_6_60_Comp.csv'; 
+cases(4).epsilon_a = 0.008;      
+cases(4).exp_life = 534;         
+
+%% GLOBAL MATERIAL CONSTANTS
+Sg = 0.38;      
+Sc = 0.9*Sg;   
+Dfc = 0.9;      
+n1 = 0.6;        
+Q = 6.97e-19;    
+T = 1033;        
+R = 8.314;       
+q_val = 0.4; % Interaction exponent
+
+% Pre-allocate
+pred_lives_linear = zeros(1,4);
+pred_lives_q      = zeros(1,4);
+exp_lives         = zeros(1,4);
+
+%% 2. MAIN LOOP
+for k = 1:length(cases)
+    eps_a = cases(k).epsilon_a;
+    current_file = cases(k).filename;
+     B1 = 2.0428e3 + (-2.1056e4 * eps_a) + (-1.2398e7 * eps_a^2);
+    phi = B1 * exp(-Q / (R * T));
+    
+    if isfile(current_file)
+        data = readmatrix(current_file);
+        time_col = data(:,1);
+        entropy_rate_col = data(:,25);
+        Delta_Sf = 0; Dc = 0;
+        
+        for i = 2:length(time_col)
+            t_current = time_col(i);
+            dt = time_col(i) - time_col(i-1);
+            s_dot = entropy_rate_col(i);
+            
+            is_creep = false; is_fatigue = false;
+            
+            % --- Time Windows for 0/60 Cases ---
+            if k == 1
+                if (t_current > 252 && t_current <= 312), is_creep = true;
+                elseif (t_current > 312 && t_current <= 336) || (t_current > 228 && t_current <= 252), is_fatigue = true; end
+            elseif k == 2
+                if (t_current > 330 && t_current <= 390), is_creep = true;
+                elseif (t_current > 390 && t_current <= 410) || (t_current > 310 && t_current <= 330), is_fatigue = true; end
+            elseif k == 3
+                if (t_current > 315 && t_current <= 375), is_creep = true;
+                elseif (t_current > 297 && t_current <= 315) || (t_current > 375 && t_current <= 393), is_fatigue = true; end
+            elseif k == 4
+                if (t_current > 116 && t_current <= 176), is_creep = true;
+                elseif (t_current > 176 && t_current <= 192) || (t_current > 100 && t_current <= 116), is_fatigue = true; end
+            end
+            
+            if is_creep && s_dot > 0
+                Dc = Dc + (1/phi)*(s_dot)^(1-n1)*dt;
+            elseif is_fatigue
+                Delta_Sf = Delta_Sf + s_dot*dt;
+            end
+        end
+        
+        if Delta_Sf >= Sg
+            Df = 1;
+        else
+            Df = (Dfc/log(1-Sc/Sg))*log(1-Delta_Sf/Sg);
+        end
+        
+        % Prediction 1: Linear
+        pred_lives_linear(k) = 1/(Dc + Df);
+        % Prediction 2: Interaction (q=0.57)
+        pred_lives_q(k) = 1/(Dc^q_val + Df^q_val);
+        
+    else
+        pred_lives_linear(k) = NaN; 
+        pred_lives_q(k) = NaN;
+    end
+    exp_lives(k)  = cases(k).exp_life;
+end
+
+%% ========================================================================
+%% 3. PLOT 1: LINEAR MODEL CORRELATION
+%% ========================================================================
+createCorrPlot(exp_lives, pred_lives_linear, 'Linear Model (0/60)', 'N_f = (D_c + D_f)^{-1}');
+
+%% ========================================================================
+%% 4. PLOT 2: INTERACTION MODEL CORRELATION (q = 0.57)
+%% ========================================================================
+createCorrPlot(exp_lives, pred_lives_q, ['Interaction Model (q=', num2str(q_val), ')'], ...
+    ['N_f = (D_c^{', num2str(q_val), '} + D_f^{', num2str(q_val), '})^{-1}']);
+
+%% ========================================================================
+%% 5. PLOT 3: STRAIN RANGE vs LIFE (COMPARISON)
+%% ========================================================================
+strain_range = 2 * [cases.epsilon_a];
+figure('Color','w','Name','Strain vs Life'); hold on;
+hExp = plot(exp_lives, strain_range, 'ok', 'MarkerSize', 12, 'LineWidth', 2, 'MarkerFaceColor', 'r');
+hLin = plot(pred_lives_linear, strain_range, 'sr', 'MarkerSize', 12, 'LineWidth', 1.5, 'MarkerFaceColor', 'none');
+hInt = plot(pred_lives_q, strain_range, 'db', 'MarkerSize', 12, 'LineWidth', 1.5, 'MarkerFaceColor', 'none');
+
+set(gca, 'XScale', 'log', 'FontSize', 22, 'LineWidth', 1.5, 'FontName', 'Times New Roman');
+xlabel('Cycles to Failure, N_f', 'FontSize', 26);
+ylabel('Strain Range, \Delta\epsilon', 'FontSize', 26);
+grid on; box on; axis square;
+legend([hExp, hLin, hInt], {'Experiment', 'Linear Model', 'Interaction Model'}, 'Location', 'northeast');
+annotation('textbox', [0.15 0.15 0.22 0.14], 'String', {'DD6, 760°C', '(0/60)'}, ...
+    'FontName','Times New Roman','FontSize',20,'BackgroundColor','white');
+
+%% ========================================================================
+%% HELPER FUNCTION
+%% ========================================================================
+function createCorrPlot(x, y, pTitle, formula)
+    figure('Color','w'); hold on;
+    colors = {'r','b','g','m'}; markers = {'s','d','^','v'};
+    limits = [min([x,y])*0.1, max([x,y])*5];
+    if isempty(limits) || any(isnan(limits)), limits = [1 10000]; end
+    
+    loglog(limits,limits,'k-','LineWidth',2); 
+    loglog(limits,limits*2,'k--','LineWidth',1.5); loglog(limits,limits*0.5,'k--','LineWidth',1.5);
+    loglog(limits,limits*3,'b-.','LineWidth',1.5); loglog(limits,limits/3,'b-.','LineWidth',1.5);
+    
+    for k = 1:length(x)
+        loglog(x(k), y(k), markers{k}, 'MarkerSize',12,'LineWidth',1.5,...
+            'MarkerEdgeColor','k','MarkerFaceColor',colors{k});
+    end
+    grid on; axis square; box on; xlim(limits); ylim(limits);
+    set(gca,'LineWidth',1.5,'FontSize',22,'FontName','Times New Roman');
+    xlabel('Experimental Life (Cycles)'); ylabel('Predicted Life (Cycles)');
+    title(pTitle);
+    annotation('textbox', [0.6 0.15 0.3 0.1], 'String', {formula}, 'Interpreter','tex',...
+        'FontSize',18,'FontName','Times New Roman','BackgroundColor','white');
+end
+
+%% 4. PLOT 2: STRAIN RANGE vs LIFE (WITH POLYNOMIAL FIT)
+%% ========================================================================
+strain_range = 2 * [cases.epsilon_a];
+X_sim = pred_lives_linear; % Using the Interaction Model results
+X_exp = exp_lives;
+Y_vals = strain_range; 
+
+figure('Color','w','Position', [900 100 800 800]); hold on;
+
+% --- 1. POLYNOMIAL FIT FOR SIMULATION DATA ---
+valid_idx = ~isnan(X_sim); 
+logX = log10(X_sim(valid_idx));
+Y_fit_data = Y_vals(valid_idx);
+
+% Fit: log10(Nf) vs Strain Range
+p = polyfit(logX, Y_fit_data, 2); 
+
+% Generate points for a smooth dashed line
+x_smooth = logspace(log10(min(X_sim(valid_idx))), log10(max(X_sim(valid_idx))), 100);
+y_smooth = polyval(p, log10(x_smooth));
+
+% Plot the Blue Dashed Fit Line
+hFit = plot(x_smooth, y_smooth, 'b--', 'LineWidth', 2);
+
+% --- 2. PLOT DATA POINTS ---
+hExp = plot(X_exp, Y_vals, 'o', 'MarkerSize', 12, 'LineWidth', 1.5, ...
+    'MarkerEdgeColor', 'k', 'MarkerFaceColor', 'r');
+hSim = plot(X_sim, Y_vals, 's', 'MarkerSize', 12, 'LineWidth', 1.5, ...
+    'MarkerEdgeColor', 'k', 'MarkerFaceColor', 'b');
+
+% --- FORMATTING ---
+set(gca, 'XScale', 'log', 'FontSize', 22, 'LineWidth', 1.5, ...
+         'FontName', 'Times New Roman', 'TickDir', 'in'); 
+ylim([0.008 0.026]); 
+xlim([10 100000]); 
+yticks([0.008 0.012 0.016 0.020 0.024]);
+xlabel('Cycles to Failure, N_f', 'FontSize', 26);
+ylabel('Strain Range, \Delta\epsilon', 'FontSize', 26);
+grid on; box on; axis square;
+% --- ANNOTATION (Bottom Left) ---
+annotation('textbox', [0.15 0.17 0.3 0.14], ...
+    'String', {'DD6, R_{\epsilon}= -1, (0/60)', '■ 760°C'}, ...
+    'Interpreter','tex', ...
+    'FontSize', 24, ...
+    'FontName', 'Times New Roman', ...
+    'FontWeight', 'normal', ...
+    'BackgroundColor','white', ...
+    'EdgeColor','black', ...
+    'LineWidth', 1.2);
+
+% Label (c)
+text(0.02, 0.98, '(c)', 'Units', 'normalized', 'FontSize', 24, ...
+    'FontName', 'Times New Roman', 'VerticalAlignment', 'top');
+% Legend and Annotation
+lgd = legend([hExp, hSim, hFit], {'Experiment', 'Simulation', 'Sim. Trendline'}, ...
+    'Location', 'northeast');
+lgd.FontSize = 24;
+
+hold off;
