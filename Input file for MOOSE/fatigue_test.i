@@ -884,8 +884,8 @@
 []
 
 [Materials]
-   [./Pin_Lu_Full_Model]
-    type = Pin_Lu_Full_Model
+   [./RVE_Paper_SXNickel]
+    type = RVE_Paper_SXNickel
     propsFile = fcc_props.in
     slipSysFile = fcc_slip_sys.in
     num_slip_sys = 12
