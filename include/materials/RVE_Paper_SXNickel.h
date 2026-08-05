@@ -3,13 +3,13 @@
 #include "EBSDMeshReader.h"
 #include "GrainAreaSize.h"
 
-class Pin_Lu_Full_Model : public ComputeStressBase
+class RVE_Paper_SXNickel : public ComputeStressBase
 {
 public:
   static InputParameters validParams();
 
-  Pin_Lu_Full_Model(const InputParameters & parameters);
-  virtual ~Pin_Lu_Full_Model();
+  RVE_Paper_SXNickel(const InputParameters & parameters);
+  virtual ~RVE_Paper_SXNickel();
 
 protected:
   FileName _propsFile;

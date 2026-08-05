@@ -1,4 +1,4 @@
-#include "Pin_Lu_Full_Model.h"
+#include "RVE_Paper_SXNickel.h"
 #include "MatrixTools.h"
 #include "MooseRandom.h"
 #include "MooseException.h"
@@ -7,11 +7,11 @@
 #include <fstream>
 #define QUOTE(macro) stringifyName(macro)
 
-registerMooseObject("RhocpApp", Pin_Lu_Full_Model);registerMooseObject("RhocpApp", Pin_Lu_Full_Model);
+registerMooseObject("RhocpApp", RVE_Paper_SXNickel);registerMooseObject("RhocpApp", RVE_Paper_SXNickel);
 
 
 InputParameters
-Pin_Lu_Full_Model::validParams()
+RVE_Paper_SXNickel::validParams()
 {
   InputParameters params = ComputeStressBase::validParams();
   params.addClassDescription("Stress calculation using the Crystal Plasticity material model for FCC and BCC crystals");
@@ -32,7 +32,7 @@ Pin_Lu_Full_Model::validParams()
   return params;
 }
 
-Pin_Lu_Full_Model::Pin_Lu_Full_Model(const InputParameters & parameters) :
+RVE_Paper_SXNickel::RVE_Paper_SXNickel(const InputParameters & parameters) :
     ComputeStressBase(parameters),
     _propsFile(getParam<FileName>("propsFile")),
     _slipSysFile(getParam<FileName>("slipSysFile")),
@@ -77,11 +77,11 @@ Pin_Lu_Full_Model::Pin_Lu_Full_Model(const InputParameters & parameters) :
   }
 }
 
-Pin_Lu_Full_Model::~Pin_Lu_Full_Model()
+RVE_Paper_SXNickel::~RVE_Paper_SXNickel()
 {
 }
 
-void Pin_Lu_Full_Model::initQpStatefulProperties()
+void RVE_Paper_SXNickel::initQpStatefulProperties()
 {
   ComputeStressBase::initQpStatefulProperties();
 
@@ -97,7 +97,7 @@ void Pin_Lu_Full_Model::initQpStatefulProperties()
 
 } // End initQpStatefulProperties()
 
-void Pin_Lu_Full_Model::computeQpStress()
+void RVE_Paper_SXNickel::computeQpStress()
 {
   Real PI = 4.0*atan(1.0);
   Real psi[3]; // Euler angles
@@ -1797,7 +1797,7 @@ void Pin_Lu_Full_Model::computeQpStress()
 } // End computeStress()
 
 // NR_residual()
-void Pin_Lu_Full_Model::NR_residual (unsigned int num_slip_sys, std::vector<std::vector<Real>> &xs0, std::vector<std::vector<Real>> &xm0,  Real dt, std::vector<Real> gdt, RankTwoTensor F1, RankTwoTensor &F_el, RankTwoTensor &F_p_inv, RankTwoTensor F_p_inv_0, Real C[3][3][3][3],std::vector<Real> &rho_SSD0, std::vector<Real> &rho_SSD, std::vector<Real> &rho_for_0, std::vector<Real> &rho_for,  std::vector<Real> &bstress0, std::vector<Real> &bstress, RankTwoTensor &sig, std::vector<Real> &tau, std::vector<Real> &tau_eff, std::vector<Real> &s_a, std::vector<Real> &s_t, std::vector<std::vector<Real>> A, std::vector<std::vector<Real>> H, std::vector<Real> &residual, Real &sse, std::vector<Real> &Prager_term,std::vector<Real> &Prager_term_0,std::vector<Real> &Dynamic_hardening_term,std::vector<Real> &Dynamic_hardening_term_0,std::vector<Real> &Static_hardening_term,std::vector<Real> &Static_hardening_term_0,std::vector<Real> &Energy,std::vector<Real> &Energy_0,std::vector<Real> &First_term_KM,std::vector<Real> &First_term_KM_0,std::vector<Real> &Second_term_KM,std::vector<Real> &Second_term_KM_0){
+void RVE_Paper_SXNickel::NR_residual (unsigned int num_slip_sys, std::vector<std::vector<Real>> &xs0, std::vector<std::vector<Real>> &xm0,  Real dt, std::vector<Real> gdt, RankTwoTensor F1, RankTwoTensor &F_el, RankTwoTensor &F_p_inv, RankTwoTensor F_p_inv_0, Real C[3][3][3][3],std::vector<Real> &rho_SSD0, std::vector<Real> &rho_SSD, std::vector<Real> &rho_for_0, std::vector<Real> &rho_for,  std::vector<Real> &bstress0, std::vector<Real> &bstress, RankTwoTensor &sig, std::vector<Real> &tau, std::vector<Real> &tau_eff, std::vector<Real> &s_a, std::vector<Real> &s_t, std::vector<std::vector<Real>> A, std::vector<std::vector<Real>> H, std::vector<Real> &residual, Real &sse, std::vector<Real> &Prager_term,std::vector<Real> &Prager_term_0,std::vector<Real> &Dynamic_hardening_term,std::vector<Real> &Dynamic_hardening_term_0,std::vector<Real> &Static_hardening_term,std::vector<Real> &Static_hardening_term_0,std::vector<Real> &Energy,std::vector<Real> &Energy_0,std::vector<Real> &First_term_KM,std::vector<Real> &First_term_KM_0,std::vector<Real> &Second_term_KM,std::vector<Real> &Second_term_KM_0){
 
   Real xL_p_inter[3][3];
   std::vector<Real> shr_g(num_slip_sys);
@@ -2080,7 +2080,7 @@ void Pin_Lu_Full_Model::NR_residual (unsigned int num_slip_sys, std::vector<std:
   // std::cout << "\n sse:" << sse;
 } // end NR_residual
 
-void Pin_Lu_Full_Model::readPropsFile() {
+void RVE_Paper_SXNickel::readPropsFile() {
   // MooseUtils::DelimitedFileReader reader(_propsFile);
 
   MooseUtils::checkFileReadable(_propsFile);
@@ -2098,7 +2098,7 @@ void Pin_Lu_Full_Model::readPropsFile() {
   file_prop.close();
 }
 
-void Pin_Lu_Full_Model::assignProperties(){
+void RVE_Paper_SXNickel::assignProperties(){
 
   // Elastic constants
   C11 = _properties[_qp][0];           //
@@ -2139,7 +2139,7 @@ void Pin_Lu_Full_Model::assignProperties(){
 }
 
 // normalize to unit vector
-void Pin_Lu_Full_Model::normalize_vector(Real *x, Real *y, Real *z) {
+void RVE_Paper_SXNickel::normalize_vector(Real *x, Real *y, Real *z) {
   Real length = sqrt(*x * *x + *y * *y + *z * *z);
 
   *x = *x/length;
@@ -2148,7 +2148,7 @@ void Pin_Lu_Full_Model::normalize_vector(Real *x, Real *y, Real *z) {
 }
 
 // Rotate 4th order stiffness tensor
-void Pin_Lu_Full_Model::rotate_4th(Real a[3][3], Real b[3][3][3][3], Real (&c)[3][3][3][3]) {
+void RVE_Paper_SXNickel::rotate_4th(Real a[3][3], Real b[3][3][3][3], Real (&c)[3][3][3][3]) {
   Real d[3][3][3][3];
 
   for(unsigned int m = 0; m < 3; m++) {
@@ -2177,7 +2177,7 @@ void Pin_Lu_Full_Model::rotate_4th(Real a[3][3], Real b[3][3][3][3], Real (&c)[3
 }
 
 // 4th order tensor to Voigt notation
-void Pin_Lu_Full_Model::forth_to_Voigt(Real a[3][3][3][3], Real (&b)[6][6]) {
+void RVE_Paper_SXNickel::forth_to_Voigt(Real a[3][3][3][3], Real (&b)[6][6]) {
   for(unsigned int i = 1; i <= 3; i++) {
     for(unsigned int j = i; j <= 3; j++) {
       unsigned int ia = i;
@@ -2198,7 +2198,7 @@ void Pin_Lu_Full_Model::forth_to_Voigt(Real a[3][3][3][3], Real (&b)[6][6]) {
 }
 
 // Voigt tensor to 4th order tensor
-void Pin_Lu_Full_Model::Voigt_to_forth(Real b[6][6], Real (&a)[3][3][3][3]) {
+void RVE_Paper_SXNickel::Voigt_to_forth(Real b[6][6], Real (&a)[3][3][3][3]) {
   for(unsigned int i = 1; i <= 3; i++) {
     for(unsigned int j = 1; j <= 3; j++) {
       unsigned int ia = i;
@@ -2224,7 +2224,7 @@ void Pin_Lu_Full_Model::Voigt_to_forth(Real b[6][6], Real (&a)[3][3][3][3]) {
   }
 }
 
-void Pin_Lu_Full_Model::aaaa_dot_dot_bbbb(Real a[3][3][3][3], Real b[3][3][3][3], Real (&product)[3][3][3][3]) {
+void RVE_Paper_SXNickel::aaaa_dot_dot_bbbb(Real a[3][3][3][3], Real b[3][3][3][3], Real (&product)[3][3][3][3]) {
 
   for (unsigned int i = 0; i < 3; i++) {
     for (unsigned int j = 0; j < 3; j++) {
@@ -2242,7 +2242,7 @@ void Pin_Lu_Full_Model::aaaa_dot_dot_bbbb(Real a[3][3][3][3], Real b[3][3][3][3]
   }
 }
 
-void Pin_Lu_Full_Model::aaaa_dot_dot_bb(Real a[3][3][3][3], Real b[3][3], Real (&product)[3][3]) {
+void RVE_Paper_SXNickel::aaaa_dot_dot_bb(Real a[3][3][3][3], Real b[3][3], Real (&product)[3][3]) {
 
   for (unsigned int i = 0; i < 3; i++) {
     for (unsigned int j = 0; j < 3; j++) {
@@ -2256,7 +2256,7 @@ void Pin_Lu_Full_Model::aaaa_dot_dot_bb(Real a[3][3][3][3], Real b[3][3], Real (
   }
 }
 
-void Pin_Lu_Full_Model::aa_dot_bb(Real a[3][3], Real b[3][3], Real (&product)[3][3]) {
+void RVE_Paper_SXNickel::aa_dot_bb(Real a[3][3], Real b[3][3], Real (&product)[3][3]) {
 
   for (unsigned int i = 0; i < 3; i++) {
     for (unsigned int j = 0; j < 3; j++) {
@@ -2268,7 +2268,7 @@ void Pin_Lu_Full_Model::aa_dot_bb(Real a[3][3], Real b[3][3], Real (&product)[3]
   }
 }
 
-Real Pin_Lu_Full_Model::aa_dot_dot_bb(Real a[3][3], Real b[3][3]) {
+Real RVE_Paper_SXNickel::aa_dot_dot_bb(Real a[3][3], Real b[3][3]) {
 
   Real product = 0.0e0;
   for (unsigned int i = 0; i < 3; i++) {
@@ -2280,7 +2280,7 @@ Real Pin_Lu_Full_Model::aa_dot_dot_bb(Real a[3][3], Real b[3][3]) {
 }
 
 // calculate Euler angles in Bunge notation
-void Pin_Lu_Full_Model::bunge_angles(Real (&array1)[3][3], Real (&psi0)[3]) {
+void RVE_Paper_SXNickel::bunge_angles(Real (&array1)[3][3], Real (&psi0)[3]) {
 
   Real PI = 4.0*atan(1.0);
   Real phi_1, Phi, phi_2, sth;
@@ -2307,7 +2307,7 @@ void Pin_Lu_Full_Model::bunge_angles(Real (&array1)[3][3], Real (&psi0)[3]) {
 }
 
 // return power (with sign)
-Real Pin_Lu_Full_Model::power(Real x, Real y) {
+Real RVE_Paper_SXNickel::power(Real x, Real y) {
 
   Real ans;
 
@@ -2339,7 +2339,7 @@ Real Pin_Lu_Full_Model::power(Real x, Real y) {
 }
 
 // return signum of a real number
-Real Pin_Lu_Full_Model::sgn(Real x) {
+Real RVE_Paper_SXNickel::sgn(Real x) {
 
   Real ans;
   ans = 1.0;
@@ -2352,7 +2352,7 @@ Real Pin_Lu_Full_Model::sgn(Real x) {
 }
 
 // return maximum of two scalars
-Real Pin_Lu_Full_Model::max_val(Real a, Real b)
+Real RVE_Paper_SXNickel::max_val(Real a, Real b)
 {
   if (a>b)
   {
