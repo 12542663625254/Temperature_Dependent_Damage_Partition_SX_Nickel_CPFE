@@ -1,8 +1,7 @@
 # Temperature-Dependent Damage Partition in Single-Crystal Nickel (CPFEM)
 
-A dislocation density-based **crystal plasticity finite element (CPFEM)** model for the creep–fatigue response of single-crystal nickel superalloy **DD6**, implemented in [MOOSE](https://mooseframework.inl.gov/). The model couples the crystal plasticity constitutive framework with an entropy-based thermodynamic damage model to predict creep–fatigue damage partitioning and life.
+A dislocation density-based **crystal plasticity finite element (CPFEM)** model for the creep–fatigue response of single-crystal nickel superalloy (DD6). The model predicts creep–fatigue life with validated **temperature dependence** and produces a **damage-partition map** that separates creep- and fatigue-dominated damage across a wide range of loading configurations. The framework is implemented in **MOOSE**(https://mooseframework.inl.gov/). 
 
-> **Repository:** `Temperature_Dependent_Damage_Partition_SX_Nickel_CPFE`
 
 ---
 
