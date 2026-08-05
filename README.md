@@ -1,8 +1,7 @@
 # Temperature-Dependent Damage Partition in Single-Crystal Nickel (CPFEM)
 
-A dislocation density-based **crystal plasticity finite element (CPFEM)** model for the creep–fatigue response of single-crystal nickel superalloy **DD6**, implemented in [MOOSE](https://mooseframework.inl.gov/). The model couples the crystal plasticity constitutive framework with an entropy-based thermodynamic damage model to predict creep–fatigue damage partitioning and life.
+A dislocation density-based **crystal plasticity finite element (CPFEM)** model for the creep–fatigue response of single-crystal nickel superalloy (DD6). The model predicts creep–fatigue life with validated **temperature dependence** and produces a **damage-partition map** that separates creep- and fatigue-dominated damage across a wide range of loading configurations. The framework is implemented in **MOOSE**(https://mooseframework.inl.gov/). 
 
-> **Repository:** `Temperature_Dependent_Damage_Partition_SX_Nickel_CPFE`
 
 ---
 
@@ -27,7 +26,7 @@ A dislocation density-based **crystal plasticity finite element (CPFEM)** model 
 
 ## Overview
 
-The custom material implements a dislocation density-based crystal plasticity constitutive model: a power-law flow rule on the 12 FCC slip systems, forest-dislocation-density evolution, an Armstrong–Frederick back-stress with dynamic and Arrhenius static recovery, a fully implicit local Newton–Raphson stress update, and a consistent algorithmic tangent. The simulation domain is a 1 µm cubic representative volume element (RVE) meshed with HEX8 elements.
+The custom material implements a dislocation density-based crystal plasticity constitutive model: a power-law flow rule on the 12 FCC slip systems, dislocation-density evolution, an Armstrong–Frederick back-stress with dynamic and Arrhenius static recovery, a fully implicit local Newton–Raphson stress update, and a consistent algorithmic tangent. The simulation domain is a 1 µm cubic representative volume element (RVE) meshed with HEX8 elements.
 
 ---
 
@@ -37,7 +36,7 @@ The custom material implements a dislocation density-based crystal plasticity co
 |---|---|
 | `src/materials` | MOOSE C++ source of the custom crystal plasticity material model. |
 | `include/materials` | Header files (`.h`) for the custom material model. |
-| `Input file for MOOSE` | MOOSE input files (`.i`) and the material/crystallography input files (`.in`). |
+| `Input file for MOOSE` | MOOSE input files (`.i`) and the properties, slip system, crystallography input files (`.in`). |
 | `Different Loading condition` | Input-file variants for the loading cases (pure fatigue, tensile/compressive hold, balanced 30/30, R-ratio and temperature variants). |
 | `Matlab Code and Data for postprocessing of the results` | MATLAB postprocessing scripts and the CSV data used to generate the figures. |
 | `README.md` | This file. |
@@ -46,7 +45,7 @@ The custom material implements a dislocation density-based crystal plasticity co
 
 | File | Description |
 |---|---|
-| `RVE_Paper_SXNickel.C` / `.h` | The custom MOOSE material (UMAT-equivalent stress update). Implements the flow rule on the 12 FCC slip systems, forest-dislocation-density evolution, Armstrong–Frederick back-stress with dynamic and Arrhenius static recovery, the implicit local Newton–Raphson update, and the algorithmic tangent. Registered in the app as object type `RVE_Paper_SXNickel`. |
+| `RVE_Paper_SXNickel.C` / `.h` | The custom MOOSE material (UMAT-equivalent stress update). Implements the flow rule on the 12 FCC slip systems, dislocation-density evolution, Armstrong–Frederick back-stress with dynamic and Arrhenius static recovery, the implicit local Newton–Raphson update, and the algorithmic tangent. Registered in the app as object type `RVE_Paper_SXNickel`. |
 
 ---
 
