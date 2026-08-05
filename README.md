@@ -37,7 +37,7 @@ The custom material implements a dislocation density-based crystal plasticity co
 |---|---|
 | `src/materials` | MOOSE C++ source of the custom crystal plasticity material model. |
 | `include/materials` | Header files (`.h`) for the custom material model. |
-| `Input file for MOOSE` | MOOSE input files (`.i`) and the material/crystallography input files (`.in`). |
+| `Input file for MOOSE` | MOOSE input files (`.i`) and the properties, slip system, crystallography input files (`.in`). |
 | `Different Loading condition` | Input-file variants for the loading cases (pure fatigue, tensile/compressive hold, balanced 30/30, R-ratio and temperature variants). |
 | `Matlab Code and Data for postprocessing of the results` | MATLAB postprocessing scripts and the CSV data used to generate the figures. |
 | `README.md` | This file. |
