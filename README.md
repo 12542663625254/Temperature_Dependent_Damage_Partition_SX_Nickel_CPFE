@@ -45,7 +45,7 @@ The custom material implements a dislocation density-based crystal plasticity co
 
 | File | Description |
 |---|---|
-| `RVE_Paper_SXNickel.C` / `.h` | The custom MOOSE material (UMAT-equivalent stress update). Implements the flow rule on the 12 FCC slip systems, forest-dislocation-density evolution, Armstrong–Frederick back-stress with dynamic and Arrhenius static recovery, the implicit local Newton–Raphson update, and the algorithmic tangent. Registered in the app as object type `RVE_Paper_SXNickel`. |
+| `RVE_Paper_SXNickel.C` / `.h` | The custom MOOSE material (UMAT-equivalent stress update). Implements the flow rule on the 12 FCC slip systems, dislocation-density evolution, Armstrong–Frederick back-stress with dynamic and Arrhenius static recovery, the implicit local Newton–Raphson update, and the algorithmic tangent. Registered in the app as object type `RVE_Paper_SXNickel`. |
 
 ---
 
