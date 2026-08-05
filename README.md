@@ -26,7 +26,7 @@ A dislocation density-based **crystal plasticity finite element (CPFEM)** model 
 
 ## Overview
 
-The custom material implements a dislocation density-based crystal plasticity constitutive model: a power-law flow rule on the 12 FCC slip systems, forest-dislocation-density evolution, an Armstrong–Frederick back-stress with dynamic and Arrhenius static recovery, a fully implicit local Newton–Raphson stress update, and a consistent algorithmic tangent. The simulation domain is a 1 µm cubic representative volume element (RVE) meshed with HEX8 elements.
+The custom material implements a dislocation density-based crystal plasticity constitutive model: a power-law flow rule on the 12 FCC slip systems, dislocation-density evolution, an Armstrong–Frederick back-stress with dynamic and Arrhenius static recovery, a fully implicit local Newton–Raphson stress update, and a consistent algorithmic tangent. The simulation domain is a 1 µm cubic representative volume element (RVE) meshed with HEX8 elements.
 
 ---
 
