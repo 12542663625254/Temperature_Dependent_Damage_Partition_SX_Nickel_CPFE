@@ -1,5 +1,7 @@
 clc; clear; close all;
 
+%%%%%%%%%%%%% Figure-9(b) of the present work%%%%%%%%%%%%
+
 %% 1. GLOBAL MATERIAL CONSTANTS & SETTINGS
 Sg = 0.38;      Sc = 0.9 * Sg;
 D0 = 0;         Dfc = 0.9;

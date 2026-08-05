@@ -1,7 +1,10 @@
 clc; clear; close all;
 
+%%%%%%% Figure-5 (a) and (b) of the present work%%%%%%%%%%%%
+
+
 %% 1. LOAD DATA
-filename = 'shi_30_30_2_4.csv'; 
+filename = 'stress_strain_30_30_2_4.csv'; 
 if isfile(filename)
     data = readmatrix(filename);
     x_data = data(:, 1);    

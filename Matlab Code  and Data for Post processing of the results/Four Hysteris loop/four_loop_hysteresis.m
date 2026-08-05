@@ -1,5 +1,9 @@
 clc; clear; close all;
 
+
+%%%%%%%% Figure- 3 %%%%%%%%
+
+
 %% 1. LOAD DATA
 data_60_0 = readmatrix('new_60_Tension.csv'); 
 data_30_30 = readmatrix('new_data_simulated.csv');

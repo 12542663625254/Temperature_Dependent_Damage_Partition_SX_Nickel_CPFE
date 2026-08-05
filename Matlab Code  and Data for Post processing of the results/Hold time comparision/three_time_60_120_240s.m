@@ -1,5 +1,9 @@
 clc; clear; close all;
 
+
+%%%%%%%%% Figure-7 (a,b,c,d)%%%%%%%%%%%%%%%%
+
+
 %% 1. SETUP: DEFINE MATERIAL CONSTANTS (980°C)
 Sg = 0.38; Sc = 0.9*Sg; Dfc = 0.9;
 n1 = 0.6; Q = 6.97e-19; T = 1033; R = 8.314;
