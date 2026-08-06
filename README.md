@@ -210,32 +210,80 @@ and `stress_zz` (**column 36**).
 
 ## Folder-to-figure map
 
-| Figure        | Folder                                          | Script                                   | Description |
-|---------------|-------------------------------------------------|------------------------------------------|-------------|
-| Fig. 2(a)     | `Cyclic_test_Hysteresis_loop`                   | `Both_1_1_5_percentage.m`                | Pure-fatigue hysteresis at 1.0 % and 1.5 % strain |
-| Fig. 2(b)     | `Cyclic_test_Hysteresis_loop`                   | `Tension_test_dwell_60sec_in_tension.m`  | 60 s tensile-dwell hysteresis loop |
-| Fig. 2(c)     | `Cyclic_test_Hysteresis_loop`                   | `Cyclic_60_Hold_Compression.m`           | 60 s compressive-hold hysteresis loop |
-| Fig. 2(d)     | `Cyclic_test_Hysteresis_loop`                   | `Creep_fatigue_test.m`                   | Combined creep-fatigue hysteresis loop |
-| Fig. 3        | `Four Hysteresis loop`                          | `four_loop_hysteresis.m`                 | The four hold-configuration hysteresis loops together |
-| Fig. 4(a)     | `Life at 760 and 980/Figure_4_(a)_paper`        | `combined_plot.m`                        | Predicted life vs. strain range at 760 and 980 °C |
-| Fig. 4(b)     | `stress_amplitude`                              | `stress_amp.m`                           | Stress-amplitude evolution over cycles (cyclic hardening) vs. experiment |
-| Fig. 5(a,b)   | `Entropy_Generation and Stress_time plots`      | `stress_strain_time.m`                   | Stress/strain and entropy-generation rate vs. time over a stabilized cycle |
-| Fig. 5(c)     | `Damage creep and fatigue evolution`            | `Figure_5_c.m`                           | Creep and fatigue damage vs. time (30/30, 1.2 %) |
-| Fig. 6(a)     | `Predicted_vs_Experimental_life`                | `Figure_6_a.m`                           | Predicted-vs-experimental life (scatter-band comparison) |
-| Fig. 6(b)     | `Predicted_vs_Experimental_life`                | `Figure_6_b.m`                           | Predicted-vs-experimental life (scatter-band comparison) |
-| Fig. 7(a–d)   | `Hold time comparison`                          | `three_time_60_120_240s.m`               | Effect of tensile hold duration (60/120/240 s) at 980 °C |
-| Fig. 8        | `Accumulated Plastic strain`                    | `all_plastic_accumulation.m`             | Accumulated inelastic strain vs. number of cycles |
-| Fig. 9(a)     | `Damage data`                                   | `corrected_damage.m`                     | Per-cycle creep and fatigue damage values |
-| Fig. 10       | `Hold time comparison`                          | `map_2_new.m`                            | Hold-time comparison / damage-partition map |
-| Fig. 11(a,b)  | `Mean strain plot`                              | `Figure_11_a_b.m`                        | Mean-strain plots |
-| Fig. 12(a)    | `Pure fatigue and different R ratio effect`     | `No_Hold_Fatigue.m`                      | Pure-fatigue response and effect of strain ratio R |
-| Fig. 12(b)    | `R ratio effect on Life`                        | `Damage_comparison.m`                    | Effect of strain ratio R on predicted life |
-| Fig. 12(c)    | `strain_ratio_life`                             | `Figure_12_c.m`                          | Effect of strain ratio R on predicted life (strain-ratio view) |
-| Fig. 13(a)    | `Life data`                                     | `Figure_13_a.m`                          | Life data, 30/30 configuration |
-| Fig. 13(b)    | `Life data`                                     | `Figure_13_b.m`                          | Life data, 60/0 configuration |
-| Fig. 14(a)    | `Life at 760 and 980`                           | `Figure_14_a.m`                          | Predicted life vs. strain range at 760 °C |
-| Fig. 14(b)    | `Life at 760 and 980`                           | `Figure_14_b.m`                          | Predicted life vs. strain range at 980 °C |
-| Fig. 15       | `Temperature_Dependent_Damage_Analysis`         | `new_temp_depen.m`                       | Total damage vs. strain amplitude at 760 and 980 °C |
+Every figure in the paper is reproduced by a single MATLAB script. Open the
+folder, run the script, and it reads the `.csv` files beside it.
+
+> Folder paths below are relative to `Data and Matlab script for postprocessing/`.
+
+---
+
+### Hysteresis loops — Fig. 2–3
+
+**`Cyclic_test_Hysteresis_loop`**
+
+| Figure | Script | What it shows |
+|:--|:--|:--|
+| 2(a) | `Both_1_1_5_percentage.m` | Pure-fatigue hysteresis at 1.0 % and 1.5 % strain |
+| 2(b) | `Tension_test_dwell_60sec_in_tension.m` | 60 s tensile-dwell loop |
+| 2(c) | `Cyclic_60_Hold_Compression.m` | 60 s compressive-hold loop |
+| 2(d) | `Creep_fatigue_test.m` | Combined creep–fatigue loop |
+
+**`Four Hysteresis loop`**
+
+| Figure | Script | What it shows |
+|:--|:--|:--|
+| 3 | `four_loop_hysteresis.m` | All four hold configurations overlaid |
+
+---
+
+### Cyclic response and life validation — Fig. 4–6
+
+| Figure | Folder | Script | What it shows |
+|:--|:--|:--|:--|
+| 4(a) | `Life at 760 and 980/Figure_4_(a)_paper` | `combined_plot.m` | Predicted life vs. strain range, 760 and 980 °C |
+| 4(b) | `stress_amplitude` | `stress_amp.m` | Cyclic hardening: stress amplitude vs. cycles, model vs. experiment |
+| 5(a,b) | `Entropy_Generation and Stress_time plots` | `stress_strain_time.m` | Stress/strain and entropy-generation rate over a stabilized cycle |
+| 5(c) | `Damage creep and fatigue evolution` | `Figure_5_c.m` | Creep and fatigue damage vs. time (30/30, 1.2 %) |
+| 6(a) | `Predicted_vs_Experimental_life` | `Figure_6_a.m` | Predicted vs. experimental life, scatter band |
+| 6(b) | `Predicted_vs_Experimental_life` | `Figure_6_b.m` | Predicted vs. experimental life, scatter band |
+
+---
+
+### Hold-time effects and damage accumulation — Fig. 7–10
+
+| Figure | Folder | Script | What it shows |
+|:--|:--|:--|:--|
+| 7(a–d) | `Hold time comparison` | `three_time_60_120_240s.m` | Effect of tensile hold duration (60/120/240 s) at 980 °C |
+| 8 | `Accumulated Plastic strain` | `all_plastic_accumulation.m` | Accumulated inelastic strain vs. cycles |
+| 9(a) | `Damage data` | `corrected_damage.m` | Per-cycle creep and fatigue damage |
+| 10 | `Hold time comparison` | `map_2_new.m` | Damage-partition map across hold times |
+
+---
+
+### Mean strain (R-ratio) effects  — Fig. 11–12
+
+| Figure | Folder | Script | What it shows |
+|:--|:--|:--|:--|
+| 11(a,b) | `Mean strain plot` | `Figure_11_a_b.m` | Mean-strain response |
+| 12(a) | `Pure fatigue and different R ratio effect` | `No_Hold_Fatigue.m` | Pure fatigue and the effect of strain ratio *R* |
+| 12(b) | `R ratio effect on Life` | `Damage_comparison.m` | Effect of *R* on predicted life |
+| 12(c) | `strain_ratio_life` | `Figure_12_c.m` | Effect of *R* on predicted life, strain-ratio view |
+
+---
+
+### Life data and temperature dependence — Fig. 13–15
+
+| Figure | Folder | Script | What it shows |
+|:--|:--|:--|:--|
+| 13(a) | `Life data` | `Figure_13_a.m` | Life data, 30/30 hold |
+| 13(b) | `Life data` | `Figure_13_b.m` | Life data, 60/0 hold |
+| 14(a) | `Life at 760 and 980` | `Figure_14_a.m` | Predicted life vs. strain range, 760 °C |
+| 14(b) | `Life at 760 and 980` | `Figure_14_b.m` | Predicted life vs. strain range, 980 °C |
+| 15 | `Temperature_Dependent_Damage_Analysis` | `new_temp_depen.m` | Total damage vs. strain amplitude, 760 and 980 °C |
+
+---
+
+### Supporting data
 
 **Supporting folder (not a numbered paper figure):** `Damage Map` — grid data
 and script used to build the fatigue / mixed / creep damage-partition map.
