@@ -38,7 +38,7 @@ The custom material implements a dislocation density-based crystal plasticity co
 | `include/materials` | Header files (`.h`) for the custom material model. |
 | `Input file for MOOSE` | MOOSE input files (`.i`) and the properties, slip system, crystallography input files (`.in`). |
 | `Different Loading condition` | Input-file variants for the loading cases (pure fatigue, tensile/compressive hold, balanced 30/30, R-ratio and temperature variants). |
-| `Matlab Code and Data for postprocessing of the results` | MATLAB postprocessing scripts and the CSV data used to generate the figures. |
+| `Data and MATLAB Scripts for Postprocessing` | MATLAB postprocessing scripts and the CSV data used to generate the figures. |
 | `README.md` | This file. |
 
 **Source and header files**
@@ -149,52 +149,105 @@ The `[Functions]` block of `fatigue_test.i` contains the strain-vs-time waveform
 
 ---
 
-## Postprocessing data — naming convention
 
-CSV data files are named by the pattern:
 
-```text
-<hold_config>_CPFEM_upto_<strain>_percent_<cycle>_cycle.csv
+# Data and MATLAB Scripts for Postprocessing
+
+This repository contains the MATLAB post-processing scripts and the CSV data
+files used to generate the figures in the paper. Each sub-folder corresponds
+to one (or a small group of) figures. The source data are outputs of a
+dislocation density-based crystal plasticity (CPFEM) model implemented in the
+MOOSE framework.
+
+## How to use
+
+1. Open the sub-folder for the figure you want to reproduce.
+2. Open the `.m` script inside it in MATLAB.
+3. Run the script — it reads the accompanying `.csv` files in the same folder
+   and produces the figure.
+
+Every script header names the paper figure it generates
+(e.g. `%%%%%% Figure-5(c) %%%%%%`).
+
+## Data file naming convention
+
+The CSV data files use a compact code for hold configuration and strain range.
+The most common pattern is:
+
+```
+<hold_config>_<strain_range>.csv
 ```
 
-| Field | Meaning |
-|---|---|
-| `hold_config` | Dwell configuration: `30_30` (balanced), `60_0` (tensile hold), `0_60` (compressive hold), or `0_0` / absent for pure fatigue. |
-| `CPFEM` | Model identifier (dislocation density-based crystal plasticity, implicit). |
-| `strain` | Strain amplitude, underscore for the decimal point, e.g. `1_2_percent` = 1.2%. |
-| `cycle` | Cycle extracted, e.g. `10_th_cycle` = the stabilized 10th cycle. |
+| Field          | Meaning |
+|----------------|---------|
+| `hold_config`  | Dwell configuration as `<tension>_<compression>` hold seconds: `0_0` (pure fatigue, no hold), `30_0` / `60_0` / `120_0` / `240_0` / `300_0` (tensile hold), `0_60` (compressive hold), `30_30` (balanced tension–compression hold). |
+| `strain_range` | Total strain range Δε in %, with an underscore for the decimal point (e.g. `2_4` = 2.4 % range → strain amplitude εₐ = 1.2 %; `1_6` = 1.6 % → εₐ = 0.8 %). |
 
-**Example:** `30_30_CPFEM_upto_1_2_percent_10_th_cycle.csv` = the 10th (stabilized) cycle of the CPFEM balanced 30/30 hold simulation at 1.2% strain amplitude.
+**Strain-code → amplitude reference** (amplitude εₐ = ½ × range):
 
-Inside each CSV, the relevant columns are `strain_zz` (column 33) and `stress_zz` (column 36).
+| Code | Range Δε | Amplitude εₐ |
+|------|----------|--------------|
+| `1_4` | 1.4 % | 0.7 % |
+| `1_6` | 1.6 % | 0.8 % |
+| `1_8` | 1.8 % | 0.9 % |
+| `2_0` | 2.0 % | 1.0 % |
+| `2_2` | 2.2 % | 1.1 % |
+| `2_4` | 2.4 % | 1.2 % |
 
----
+**Example:** `30_30_2_4.csv` = balanced 30/30 s hold simulation at 2.4 % total
+strain range (1.2 % amplitude).
 
-## Postprocessing sub-folders
+Some files carry an extra descriptive prefix or suffix instead of the bare code
+— for example `Fatigue_60_0_2_4.csv` (fatigue / creep-fatigue set),
+`CFI_2_4_30_30_new.csv` (creep-fatigue interaction, strain range then hold),
+and the `shi_…`, `hold_…`, `cyclic_…`, `Pin_…` variants. Files beginning with
+`R_…` are strain-ratio R cases, and `mean_…` / `mean_strain_…` are mean-strain
+cases. A trailing `_new` or `_for_curve` marks a revised or curve-fitting
+version of the same case.
 
-Each sub-folder of *Matlab Code and Data for postprocessing of the results* contains the MATLAB script(s) and CSV data for one analysis:
+Inside each CSV, the two most relevant columns are `strain_zz` (**column 33**)
+and `stress_zz` (**column 36**).
 
-| Sub-folder | Contents |
-|---|---|
-| `Accumulated Plastic strain` | Accumulated inelastic strain vs. number of cycles for different hold times. |
-| `Damage Map` | Data and script for the damage-partition map (fatigue / mixed / creep regions). |
-| `Damage data` | Per-cycle creep and fatigue damage values. |
-| `Entropy_Generation and Stress_time plots` | Stress, strain and entropy-generation-rate vs. time over a stabilized cycle. |
-| `Fatigue_Test_1%_Validation_Pin_lu` | Hysteresis-loop validation at 1.0% strain (pure fatigue). |
-| `Fatigue_Test_1.5%_for_10_cycle_Validation` | Hysteresis-loop validation at 1.5% strain over 10 cycles. |
-| `Fatigue_Test_for_1.2_for_10cyle_30_sec_dwell_in_tension` | Creep-fatigue hysteresis at 1.2% strain, 30 s tensile dwell. |
-| `Four Hysteris loop` | The four hold-configuration hysteresis loops together. |
-| `Hold time comparision` | Effect of tensile hold duration (0–300 s) on response, relaxation and life. |
-| `Life at 760 and 980` | Predicted life vs. strain range at 760 °C and 980 °C. |
-| `Life data` | Predicted-vs-experimental life (scatter-band comparison). |
-| `Pure fatigue and different R ratio effect` | Pure-fatigue response and effect of strain ratio R. |
-| `R ratio effect on Life` | Effect of strain ratio R on predicted life. |
-| `Temperature_Dependent_Damage_Analysis` | Total damage vs. strain amplitude at 760 °C and 980 °C. |
-| `stress_amplitude` | Stress amplitude evolution over cycles (cyclic hardening) vs. experiment. |
-| `tension_dwell_1.2%` | Creep-fatigue response at 1.2% strain with a tensile dwell. |
+## Folder-to-figure map
 
-> Rename / re-map these to the exact figure numbers in the final paper as needed.
+| Figure        | Folder                                          | Script                                   | Description |
+|---------------|-------------------------------------------------|------------------------------------------|-------------|
+| Fig. 2(a)     | `Cyclic_test_Hysteresis_loop`                   | `Both_1_1_5_percentage.m`                | Pure-fatigue hysteresis at 1.0 % and 1.5 % strain |
+| Fig. 2(b)     | `Cyclic_test_Hysteresis_loop`                   | `Tension_test_dwell_60sec_in_tension.m`  | 60 s tensile-dwell hysteresis loop |
+| Fig. 2(c)     | `Cyclic_test_Hysteresis_loop`                   | `Cyclic_60_Hold_Compression.m`           | 60 s compressive-hold hysteresis loop |
+| Fig. 2(d)     | `Cyclic_test_Hysteresis_loop`                   | `Creep_fatigue_test.m`                   | Combined creep-fatigue hysteresis loop |
+| Fig. 3        | `Four Hysteresis loop`                          | `four_loop_hysteresis.m`                 | The four hold-configuration hysteresis loops together |
+| Fig. 4(a)     | `Life at 760 and 980/Figure_4_(a)_paper`        | `combined_plot.m`                        | Predicted life vs. strain range at 760 and 980 °C |
+| Fig. 4(b)     | `stress_amplitude`                              | `stress_amp.m`                           | Stress-amplitude evolution over cycles (cyclic hardening) vs. experiment |
+| Fig. 5(a,b)   | `Entropy_Generation and Stress_time plots`      | `stress_strain_time.m`                   | Stress/strain and entropy-generation rate vs. time over a stabilized cycle |
+| Fig. 5(c)     | `Damage creep and fatigue evolution`            | `Figure_5_c.m`                           | Creep and fatigue damage vs. time (30/30, 1.2 %) |
+| Fig. 6(a)     | `Predicted_vs_Experimental_life`                | `Figure_6_a.m`                           | Predicted-vs-experimental life (scatter-band comparison) |
+| Fig. 6(b)     | `Predicted_vs_Experimental_life`                | `Figure_6_b.m`                           | Predicted-vs-experimental life (scatter-band comparison) |
+| Fig. 7(a–d)   | `Hold time comparison`                          | `three_time_60_120_240s.m`               | Effect of tensile hold duration (60/120/240 s) at 980 °C |
+| Fig. 8        | `Accumulated Plastic strain`                    | `all_plastic_accumulation.m`             | Accumulated inelastic strain vs. number of cycles |
+| Fig. 9(a)     | `Damage data`                                   | `corrected_damage.m`                     | Per-cycle creep and fatigue damage values |
+| Fig. 10       | `Hold time comparison`                          | `map_2_new.m`                            | Hold-time comparison / damage-partition map |
+| Fig. 11(a,b)  | `Mean strain plot`                              | `Figure_11_a_b.m`                        | Mean-strain plots |
+| Fig. 12(a)    | `Pure fatigue and different R ratio effect`     | `No_Hold_Fatigue.m`                      | Pure-fatigue response and effect of strain ratio R |
+| Fig. 12(b)    | `R ratio effect on Life`                        | `Damage_comparison.m`                    | Effect of strain ratio R on predicted life |
+| Fig. 12(c)    | `strain_ratio_life`                             | `Figure_12_c.m`                          | Effect of strain ratio R on predicted life (strain-ratio view) |
+| Fig. 13(a)    | `Life data`                                     | `Figure_13_a.m`                          | Life data, 30/30 configuration |
+| Fig. 13(b)    | `Life data`                                     | `Figure_13_b.m`                          | Life data, 60/0 configuration |
+| Fig. 14(a)    | `Life at 760 and 980`                           | `Figure_14_a.m`                          | Predicted life vs. strain range at 760 °C |
+| Fig. 14(b)    | `Life at 760 and 980`                           | `Figure_14_b.m`                          | Predicted life vs. strain range at 980 °C |
+| Fig. 15       | `Temperature_Dependent_Damage_Analysis`         | `new_temp_depen.m`                       | Total damage vs. strain amplitude at 760 and 980 °C |
 
+**Supporting folder (not a numbered paper figure):** `Damage Map` — grid data
+and script used to build the fatigue / mixed / creep damage-partition map.
+
+## Requirements
+
+- MATLAB (tested on R2025b).
+- No additional toolboxes are required for the basic plots.
+
+## Citation
+
+If you use these scripts or data, please cite the associated paper.
 ---
 
 ## Damage calculation
